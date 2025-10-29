@@ -6,11 +6,7 @@
   ],
   "scripts": {
     "dev:api": "npm run dev --workspace agent-chat-api",
-    "dev:ui": "npm run dev --workspace agent-chat-ui",
-    "dev": "concurrently \"npm run dev:api\" \"npm run dev:ui\"",
-    "build:api": "npm run build --workspace agent-chat-api",
-    "build:ui": "npm run build --workspace agent-chat-ui",
-    "build": "concurrently \"npm run build:api\" \"npm run build:ui\""
+    "dev:ui": "npm run dev --workspace agent-chat-ui"
   },
   "devDependencies": {
     "concurrently": "^9.0.0"
