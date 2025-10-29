@@ -2,10 +2,10 @@
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "builds": [
     { "src": "packages/ui/next.config.js", "use": "@vercel/next" },
-    { "src": "packages/api/src/index.ts", "use": "@vercel/node" }
+    { "src": "packages/api/dist/index.js", "use": "@vercel/node" }
   ],
   "routes": [
-    { "src": "/api/(.*)", "dest": "packages/api/src/index.ts" },
+    { "src": "/api/(.*)", "dest": "packages/api/dist/index.js" },
     { "src": "/(.*)", "dest": "packages/ui/$1" }
   ]
 }
