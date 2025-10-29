@@ -1,0 +1,92 @@
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["postgresqlExtensions"]
+}
+
+datasource db {
+  provider   = "postgresql"
+  url        = env("DATABASE_URL")
+  extensions = [vector(schema: "public")]
+}
+
+model User {
+  id        String   @id @default(uuid())
+  firstName String
+  lastName  String
+  email     String   @unique
+  password  String?  @map("password_hash")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  agents Agent[]
+
+  @@map("users")
+}
+
+model Agent {
+  id          String     @id @default(uuid())
+  name        String
+  description String?
+  userId      String     @map("user_id")
+  user        User       @relation(fields: [userId], references: [id])
+  createdAt   DateTime   @default(now()) @map("created_at")
+  updatedAt   DateTime   @updatedAt @map("updated_at")
+  documents   Document[]
+  openapis    OpenAPI[]
+  mcps        MCP[]
+
+  @@map("agents")
+}
+
+model Document {
+  id        String          @id @default(uuid())
+  name      String
+  type      String
+  size      Int
+  agentId   String          @map("agent_id")
+  agent     Agent           @relation(fields: [agentId], references: [id], onDelete: Cascade)
+  chunks    DocumentChunk[]
+  createdAt DateTime        @default(now()) @map("created_at")
+
+  @@map("documents")
+}
+
+model DocumentChunk {
+  id         String                      @id @default(uuid())
+  documentId String                      @map("document_id")
+  document   Document                    @relation(fields: [documentId], references: [id], onDelete: Cascade)
+  chunkText  String                      @map("chunk_text") @db.Text
+  chunkIndex Int                         @map("chunk_index")
+  embedding  Unsupported("vector(1536)")
+  createdAt  DateTime                    @default(now()) @map("created_at")
+
+  @@index([documentId])
+  @@map("document_chunks")
+}
+
+model OpenAPI {
+  id          String   @id @default(uuid())
+  name        String
+  schemaUrl   String   @map("schema_url")
+  apiUrl      String   @map("api_url")
+  toolsSchema Json     @map("tools_schema")
+  agentId     String   @map("agent_id")
+  agent       Agent    @relation(fields: [agentId], references: [id], onDelete: Cascade)
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  @@map("openapis")
+}
+
+model MCP {
+  id        String   @id @default(uuid())
+  name      String
+  transport String // "sse", "http"
+  url       String // server URL
+  agentId   String   @map("agent_id")
+  agent     Agent    @relation(fields: [agentId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("mcps")
+}
