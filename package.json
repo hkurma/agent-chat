@@ -2,7 +2,7 @@
   "private": true,
   "name": "agent-chat",
   "workspaces": [
-    "packages/*"
+    "src/*"
   ],
   "scripts": {
     "dev:api": "npm run dev --workspace agent-chat-api",
